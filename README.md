@@ -1,4 +1,3 @@
-# Big_Data_homeworks
 
 ## HW 1
 
