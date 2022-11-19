@@ -22,7 +22,7 @@ if __name__ == "__main__":
     "John 1800 February",
     "John 1000 March",
     "Mary 1500 February",
-    "Mary 2900 March"
+    "Mary 2900 March",
     "Mary 1600 April",
     "John 2800 April"
     ]
