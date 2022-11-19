@@ -25,7 +25,7 @@
 
 Результат работы функции:
 
-<img width="353" alt="image" src="https://user-images.githubusercontent.com/74068173/202864160-3021b86c-446b-4d16-8707-b31e2259ea43.png">
+<img width="295" alt="image" src="https://user-images.githubusercontent.com/74068173/202865219-089512ce-2941-474f-b23e-a1c1e4aa5152.png">
 
 
 ### Фундаментальная математика с RDD
