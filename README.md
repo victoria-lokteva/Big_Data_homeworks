@@ -21,8 +21,15 @@
 
 ###  Обработка коллекции 
 
+Код лежит в папке RDD в скрипте data_engineering.py
 
 ### Фундаментальная математика с RDD
+
+Код лежит в папке RDD в скрипте fundamental_math.py
+
+Результат работы функции:
+
+<img width="497" alt="Screenshot 2022-11-19 at 20 11 54" src="https://user-images.githubusercontent.com/74068173/202863133-c6d76041-2938-4805-a58b-02a636a58b9d.png">
 
 
 ## Spark SQL + DataFrames
