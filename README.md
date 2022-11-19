@@ -19,9 +19,14 @@
 <img width="968" alt="Screenshot 2022-11-19 at 19 45 48" src="https://user-images.githubusercontent.com/74068173/202862066-abdb4a34-bd01-4f07-a770-058045532389.png">
 
 
-###  Обработка коллекции 
+###  Настоящий Data Engineering
 
 Код лежит в папке RDD в скрипте data_engineering.py
+
+Результат работы функции:
+
+<img width="353" alt="image" src="https://user-images.githubusercontent.com/74068173/202864160-3021b86c-446b-4d16-8707-b31e2259ea43.png">
+
 
 ### Фундаментальная математика с RDD
 
