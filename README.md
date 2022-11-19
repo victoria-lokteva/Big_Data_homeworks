@@ -12,6 +12,11 @@
 
 ###   Немного теории множеств с RDD 
 
+Код лежит в папке RDD в скрипте set_theory.py
+
+Результат работы кода:
+
+<img width="968" alt="Screenshot 2022-11-19 at 19 45 48" src="https://user-images.githubusercontent.com/74068173/202862066-abdb4a34-bd01-4f07-a770-058045532389.png">
 
 
 ###  Обработка коллекции 
