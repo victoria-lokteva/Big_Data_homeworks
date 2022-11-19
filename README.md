@@ -44,4 +44,9 @@
 
 Код лежит в папке SQL в скрипте avg_salaries.py
 
+Результат работы функции
+
+<img width="175" alt="Screenshot 2022-11-19 at 21 12 03" src="https://user-images.githubusercontent.com/74068173/202865499-3f0c39a4-2a89-401d-bce0-6fa0810c45f7.png">
+
+
 ### Имена девочек приканадских штатов в период ПМВ
