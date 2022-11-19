@@ -9,7 +9,7 @@ def avg(x):
 
 def avg_salary(salaries):
     rdd = sc.parallelize(salaries, 3)
-    # Разобъем строку на имя зарплату и месяц
+    # Разобъем строку на имя, зарплату 
     rdd = rdd.map(split)
     rdd = rdd.groupByKey().mapValues(list)
     return rdd.mapValues(np.mean).collect()
