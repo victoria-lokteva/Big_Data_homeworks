@@ -3,7 +3,7 @@ functionalLanguages = sc.parallelize(["Scala", "Kotlin", "JavaScript", "Haskell"
 webLanguages = sc.parallelize(["PHP", "Ruby", "Perl", "JavaScript", "Python"])
 mlLanguages = sc.parallelize(["JavaScript", "Python", "Scala"])
 
-jvm_ml = jvmLanguages.intersection(mlLanguages).collect()
+jvm_ml = jvmLanguages.intersection(mlLanguages)
 web_notfunc = webLanguages.subtract(functionalLanguages)
 jvm_func = sc.union([functionalLanguages, jvmLanguages]).distinct()
 print("ЯП, запускаемые на JVM и имеющие поддержку ML: ", jvm_ml.collect())
