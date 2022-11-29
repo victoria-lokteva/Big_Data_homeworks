@@ -1,4 +1,5 @@
 from pyspark.sql.types import StructType, StructField, IntegerType, StringType
+from pyspark.sql import functions as F
 
 def isCanadaNeighbour(stateName):
     if stateName in ['AK', 'ME', 'NY', 'ID', 'VT', 'MN', 'MI', 'OH',
@@ -18,7 +19,7 @@ schema = StructType([
     StructField("Count", IntegerType(), True)])
 
 df = spark.read.csv(name,header=False,schema=schema)
-df = df.filter(col("Gender")=='F')
-df = df.filter(col("Year")>=1914)
-df = df.filter(col("Year")<=1918)
-df = df.filter(col("State").map(isCanadaNeighbour))
+df = df.filter(F.col("Gender")=='F')
+df = df.filter(F.col("Year")>=1914)
+df = df.filter(F.col("Year")<=1918)
+df = df.filter(F.col("State").map(isCanadaNeighbour))
