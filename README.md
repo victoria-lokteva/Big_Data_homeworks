@@ -9,6 +9,12 @@
 
 ###  Обработка коллекции 
 
+Код лежит в папке RDD в скрипте collection.py
+
+Результат работы кода:
+
+<img width="1305" alt="Screenshot 2022-11-29 at 13 24 03" src="https://user-images.githubusercontent.com/74068173/204585393-64abace0-8353-4f2a-a6c0-0fd2f227b46e.png">
+
 
 ###   Немного теории множеств с RDD 
 
