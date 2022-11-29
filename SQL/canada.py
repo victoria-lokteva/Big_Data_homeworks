@@ -28,4 +28,7 @@ df = df.filter(F.col("Year")>=1914)
 df = df.filter(F.col("Year")<=1918)
 df = df.filter(F.col("isCanadaNeighbour") == True)
 
-df.write.parquet("result.parquet")
+names = df.select('Name').distinct().rdd.map(lambda r: r[0]).collect()
+
+
+names.write.parquet("result.parquet")
