@@ -29,6 +29,8 @@ df = df.filter(F.col("Year")<=1918)
 df = df.filter(F.col("isCanadaNeighbour") == True)
 
 names = df.select('Name').distinct().rdd.map(lambda r: r[0]).collect()
+names_for_parquet = [[i] for i in names]
+dataframe = spark.createDataFrame(names_for_parquet, ["Names"])
+dataframe.write.parquet("result.parquet")
 
 
-names.write.parquet("result.parquet")
