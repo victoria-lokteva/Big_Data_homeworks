@@ -1,4 +1,5 @@
-from pyspark.sql.types import StructType, StructField, IntegerType, StringType
+from pyspark.sql.types import StructType, StructField, IntegerType, StringType, BooleanType
+from pyspark.sql.functions import udf
 from pyspark.sql import functions as F
 
 def isCanadaNeighbour(stateName):
@@ -9,6 +10,8 @@ def isCanadaNeighbour(stateName):
         return False
 
 
+udf_isCanadaNeighbour = udf(isCanadaNeighbour, BooleanType()) 
+    
 name = '/Users/victorialokteva/Downloads/StateNames.csv'
 schema = StructType([
     StructField("Id", IntegerType(), True),
@@ -19,7 +22,10 @@ schema = StructType([
     StructField("Count", IntegerType(), True)])
 
 df = spark.read.csv(name,header=False,schema=schema)
+df = df.withColumn("isCanadaNeighbour", udf_isCanadaNeighbour("State"))
 df = df.filter(F.col("Gender")=='F')
 df = df.filter(F.col("Year")>=1914)
 df = df.filter(F.col("Year")<=1918)
-df = df.filter(F.col("State").map(isCanadaNeighbour))
+df = df.filter(F.col("isCanadaNeighbour") == True)
+
+df.write.parquet("result.parquet")
