@@ -19,7 +19,7 @@ schema = StructType([
     StructField("body", IntegerType(), True),
     StructField("homedest", StringType(), True)])
 
-df = spark.read.csv(name, sep =';', header=False,schema=schema)
+df = spark.read.csv(name, sep =';', header=True, schema=schema)
 train, test = df.randomSplit([0.6, 0.4], seed=2)
 
 
