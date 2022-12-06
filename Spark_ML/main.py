@@ -2,7 +2,7 @@ from pyspark.sql import functions as F
 from pyspark.sql.types import StructType, StructField, IntegerType, StringType
 from pyspark.ml.classification import LogisticRegression, LinearSVC, NaiveBayes, RandomForestClassifier
 from pyspark.ml.tuning import CrossValidator, ParamGridBuilder, CrossValidatorModel
-from pyspark.ml.feature import StringIndexer, OneHotEncoder, VectorAssembler,  MinMaxScaler
+from pyspark.ml.feature import StringIndexer, OneHotEncoder, VectorAssembler,  MinMaxScaler, VectorAssembler
 from pyspark.sql.functions import mean as _mean, col
 
 name = '/Users/victorialokteva/Downloads/titanic.csv'
@@ -29,9 +29,16 @@ df_stats = df.select(_mean(col('body')).alias('mean')).collect()
 mean_body = df_stats[0]['mean']
 df = df.na.fill({'age': 150, 'cabin': 'unknown', 'embarked':'S', 'homedest':'unknown',
                 'body': mean_body, 'boat': -1, "sex": 'unknown', 'fare': -1, 
-                 'parch': -1, 'sibsp':-1, 'ticket':-1})
+                 'parch': -1, 'sibsp':-1, 'ticket': 'unknown'})
 
 # Сделаем one-hot encoding и нормализацию
+
+for i in ["age", "body"]:
+    assembler = VectorAssembler(inputCols=[i],outputCol=i+"_Vect")
+    scaler = MinMaxScaler(inputCol=i+"_Vect", outputCol=i+"_Scaled")
+    pipeline = Pipeline(stages=[assembler, scaler])
+    df = pipeline.fit(df).transform(df).withColumn(i+"_Scaled", unlist(i+"_Scaled")).drop(i+"_Vect")
+
 
 
 train, test = df.randomSplit([0.6, 0.4], seed=2)
