@@ -3,6 +3,7 @@ from pyspark.sql.types import StructType, StructField, IntegerType, StringType
 from pyspark.ml.classification import LogisticRegression, LinearSVC, NaiveBayes, RandomForestClassifier
 from pyspark.ml.tuning import CrossValidator, ParamGridBuilder, CrossValidatorModel
 from pyspark.ml.feature import StringIndexer, OneHotEncoder, VectorAssembler
+from pyspark.sql.functions import mean as _mean, col
 
 name = '/Users/victorialokteva/Downloads/titanic.csv'
 schema = StructType([
@@ -22,6 +23,17 @@ schema = StructType([
     StructField("homedest", StringType(), True)])
 
 df = spark.read.csv(name, sep =';', header=True, schema=schema)
+
+# заполним пропуски (body заполним средним, порт посадки - самым распространенным значением, а для возраств введем большое значение)
+df_stats = df.select(_mean(col('body')).alias('mean')).collect()
+mean_body = df_stats[0]['mean']
+df = df.na.fill({'age': 150, 'cabin': 'unknown', 'embarked':'S', 'homedest':'unknown',
+                'body': mean_body, 'boat': -1, "sex": 'unknown', 'fare': -1, 
+                 'parch': -1, 'sibsp':-1, 'ticket':-1})
+
+# Сделаем one-hot encoding и нормализацию
+
+
 train, test = df.randomSplit([0.6, 0.4], seed=2)
 
 
