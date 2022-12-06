@@ -84,6 +84,14 @@ df = df.drop('age')
 df = df.drop('body')
 df = df.withColumnRenamed("body_Scaled", "body").withColumnRenamed("age_Scaled", "age")
     
+    
+features = [['pclass','sex', 'age', 'sibsp', 'parch', 'ticket', 'fare', 
+            'cabin', 'embarked', 'boat', 'body', 'homedest']]
+vectorAssembler = VectorAssembler(inputCols = features, outputCol = 'features')
+df = vectorAssembler.transform(df)
+df = df.select(['features', 'survived'])
+
+    
 # разобъем на тренировочную и тестовую выборки
 train, test = df.randomSplit([0.6, 0.4], seed=2)
 
