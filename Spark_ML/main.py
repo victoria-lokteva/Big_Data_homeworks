@@ -35,6 +35,44 @@ df = df.na.fill({'age': 100, 'cabin': 'unknown', 'embarked':'S', 'homedest':'unk
 
 # Сделаем one-hot encoding и нормализацию
 
+def emb_map(s):
+    if s == "S":
+        return 0
+    elif s == "C":
+        return 1
+    elif s == "Q":
+        return 2
+    return -1
+
+def sex_map(s):
+    if s == "F":
+        return 0
+    elif s == "M":
+        return 1
+    return -1
+
+def dest_map(s):
+    if s == "New York, NY":
+        return 0
+    elif s == "London":
+        return 1
+    elif s == "Montreal, PQ":
+        return 2
+    elif s == "Paris, France":
+        return 3
+    elif s == "Cornwall / Akron, OH":
+        return 4
+    return 5
+
+dest_map = udf(dest_map, IntegerType())
+df = df.withColumn("homedest", dest_map("homedest"))
+
+emb_map = udf(emb_map, IntegerType())
+df = df.withColumn("embarked", emb_map("embarked"))
+
+sex_map = udf(sex_map, IntegerType())
+df = df.withColumn("sex", sex_map("sex"))
+
 unlist = udf(lambda x: round(float(list(x)[0]),3), DoubleType())
 for i in ["age", "body"]:
     assembler = VectorAssembler(inputCols=[i],outputCol=i+"_Vect")
