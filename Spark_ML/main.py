@@ -1,5 +1,7 @@
 from pyspark.sql import functions as F
 from pyspark.sql.types import StructType, StructField, IntegerType, StringType
+from pyspark.ml.classification import LogisticRegression
+
 name = '/Users/victorialokteva/Downloads/titanic.csv'
 schema = StructType([
     StructField("pclass", IntegerType(), True),
@@ -18,3 +20,7 @@ schema = StructType([
     StructField("homedest", StringType(), True)])
 
 df = spark.read.csv(name, sep =';', header=False,schema=schema)
+train, test = df.randomSplit([0.6, 0.4], seed=2)
+
+
+lr = LogisticRegression()
