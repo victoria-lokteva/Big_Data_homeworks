@@ -2,7 +2,7 @@ from pyspark.sql import functions as F
 from pyspark.sql.types import StructType, StructField, IntegerType, StringType
 from pyspark.ml.classification import LogisticRegression, LinearSVC, NaiveBayes, RandomForestClassifier
 from pyspark.ml.tuning import CrossValidator, ParamGridBuilder, CrossValidatorModel
-from pyspark.ml.feature import StringIndexer, OneHotEncoder, VectorAssembler
+from pyspark.ml.feature import StringIndexer, OneHotEncoder, VectorAssembler,  MinMaxScaler
 from pyspark.sql.functions import mean as _mean, col
 
 name = '/Users/victorialokteva/Downloads/titanic.csv'
