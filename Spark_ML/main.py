@@ -42,6 +42,8 @@ for i in ["age", "body"]:
     pipeline = Pipeline(stages=[assembler, scaler])
     df = pipeline.fit(df).transform(df).withColumn(i+"_Scaled", unlist(i+"_Scaled")).drop(i+"_Vect")
 
+df = df.drop('age')
+df = df.drop('body')
 df = df.withColumnRenamed("body_Scaled", "body").withColumnRenamed("age_Scaled", "age")
     
 # разобъем на тренировочную и тестовую выборки
