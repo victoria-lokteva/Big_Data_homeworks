@@ -1,5 +1,6 @@
 from pyspark.sql import functions as F
 from pyspark.sql.types import StructType, StructField, IntegerType, StringType, DoubleType
+from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from pyspark.ml.classification import LogisticRegression, LinearSVC, NaiveBayes, RandomForestClassifier
 from pyspark.ml.tuning import CrossValidator, ParamGridBuilder, CrossValidatorModel
 from pyspark.ml.feature import StringIndexer, OneHotEncoder, VectorAssembler,  MinMaxScaler, VectorAssembler
@@ -85,8 +86,7 @@ df = df.drop('body')
 df = df.withColumnRenamed("body_Scaled", "body").withColumnRenamed("age_Scaled", "age")
     
     
-features = [['pclass','sex', 'age', 'sibsp', 'parch', 'ticket', 'fare', 
-            'cabin', 'embarked', 'boat', 'body', 'homedest']]
+features = ['pclass','sex', 'age', 'sibsp', 'parch', 'fare', 'embarked', 'boat', 'body', 'homedest']
 vectorAssembler = VectorAssembler(inputCols = features, outputCol = 'features')
 df = vectorAssembler.transform(df)
 df = df.select(['features', 'survived'])
@@ -97,23 +97,43 @@ train, test = df.randomSplit([0.6, 0.4], seed=2)
 
 # Линейная решрессия
 
-lr = LinearRegression()
+lr = LogisticRegression(labelCol="survived", featuresCol="features")
 lr_model = lr.fit(train)
+
+rawPredictions = lr_model.transform(test)
+evaluator = MulticlassClassificationEvaluator(labelCol="survived", predictionCol="prediction",
+                                              metricName="accuracy")
+
+accuracy = evaluator.evaluate(rawPredictions)
+print("Test accuracy ", accuracy)
 
 # SVM
 
-lsvc = LinearSVC(maxIter=10, regParam=0.1)
+lsvc = LinearSVC(labelCol="survived", featuresCol="features", maxIter=10, regParam=0.1)
 lsvc = lsvc.fit(train)
 
-# NAive Bayes
+rawPredictions = lsvc.transform(test)
+evaluator = MulticlassClassificationEvaluator(labelCol="survived", predictionCol="prediction",
+                                              metricName="accuracy")
 
-nb = NaiveBayes(smoothing=1.0, modelType="multinomial")
-nb = nb.fit(train)
-
+accuracy = evaluator.evaluate(rawPredictions)
+print("Test accuracy ", accuracy)
+    
+    
 # Random Forest
 
-rf = RandomForestClassifier(seed=42)
+rf = RandomForestClassifier(labelCol="survived", featuresCol="features", seed=2)
 grid = ParamGridBuilder().addGrid(rf.maxDepth, [1, 4]).addGrid(rf.numTrees, [3, 15]).build()
-evaluator = BinaryClassificationEvaluator()
+evaluator = MulticlassClassificationEvaluator(labelCol="survived", predictionCol="prediction",
+                                              metricName="accuracy")
 cv = CrossValidator(estimator=rf, estimatorParamMaps=grid, evaluator=evaluator,
     parallelism=2)
+
+cv = cv.fit(train)
+print(cv.bestModel)
+print(cv.avgMetrics)
+rawPredictions = cv.transform(test)
+
+
+accuracy = evaluator.evaluate(rawPredictions)
+print("Test accuracy ", accuracy)
