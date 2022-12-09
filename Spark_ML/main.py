@@ -11,28 +11,10 @@ from pyspark.sql.functions import udf
 name = '/Users/victorialokteva/Downloads/mushrooms.csv'
 df = spark.read.csv(name, header=True, schema=schema)
 
-# Сделаем one-hot encoding и нормализацию
+# Сделаем one-hot encoding
 
 
-dest_map = udf(dest_map, IntegerType())
-df = df.withColumn("homedest", dest_map("homedest"))
 
-emb_map = udf(emb_map, IntegerType())
-df = df.withColumn("embarked", emb_map("embarked"))
-
-sex_map = udf(sex_map, IntegerType())
-df = df.withColumn("sex", sex_map("sex"))
-
-unlist = udf(lambda x: round(float(list(x)[0]),3), DoubleType())
-for i in ["age", "body"]:
-    assembler = VectorAssembler(inputCols=[i],outputCol=i+"_Vect")
-    scaler = MinMaxScaler(inputCol=i+"_Vect", outputCol=i+"_Scaled")
-    pipeline = Pipeline(stages=[assembler, scaler])
-    df = pipeline.fit(df).transform(df).withColumn(i+"_Scaled", unlist(i+"_Scaled")).drop(i+"_Vect")
-
-df = df.drop('age')
-df = df.drop('body')
-df = df.withColumnRenamed("body_Scaled", "body").withColumnRenamed("age_Scaled", "age")
     
     
 features = ['pclass','sex', 'age', 'sibsp', 'parch', 'fare', 'embarked', 'boat', 'body', 'homedest']
