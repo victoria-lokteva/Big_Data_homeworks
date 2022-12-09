@@ -8,24 +8,8 @@ from pyspark.sql.functions import mean as _mean, col
 from pyspark.ml import Pipeline
 from pyspark.sql.functions import udf
 
-name = '/Users/victorialokteva/Downloads/titanic.csv'
-schema = StructType([
-    StructField("pclass", IntegerType(), True),
-    StructField("survived", IntegerType(), True),
-    StructField("name", StringType(), True),
-    StructField("sex", StringType(), True),
-    StructField("age", IntegerType(), True),
-    StructField("sibsp", IntegerType(), True),
-    StructField("parch", IntegerType(), True),
-    StructField("ticket", IntegerType(), True),
-    StructField("fare", IntegerType(), True),
-    StructField("cabin", StringType(), True),
-    StructField("embarked", StringType(), True),
-    StructField("boat", IntegerType(), True),
-    StructField("body", IntegerType(), True),
-    StructField("homedest", StringType(), True)])
-
-df = spark.read.csv(name, sep =';', header=True, schema=schema)
+name = '/Users/victorialokteva/Downloads/mushrooms.csv'
+df = spark.read.csv(name, header=True, schema=schema)
 
 # заполним пропуски (body заполним средним, порт посадки - самым распространенным значением, а для возраств введем большое значение)
 df_stats = df.select(_mean(col('body')).alias('mean')).collect()
@@ -36,34 +20,6 @@ df = df.na.fill({'age': 100, 'cabin': 'unknown', 'embarked':'S', 'homedest':'unk
 
 # Сделаем one-hot encoding и нормализацию
 
-def emb_map(s):
-    if s == "S":
-        return 0
-    elif s == "C":
-        return 1
-    elif s == "Q":
-        return 2
-    return -1
-
-def sex_map(s):
-    if s == "F":
-        return 0
-    elif s == "M":
-        return 1
-    return -1
-
-def dest_map(s):
-    if s == "New York, NY":
-        return 0
-    elif s == "London":
-        return 1
-    elif s == "Montreal, PQ":
-        return 2
-    elif s == "Paris, France":
-        return 3
-    elif s == "Cornwall / Akron, OH":
-        return 4
-    return 5
 
 dest_map = udf(dest_map, IntegerType())
 df = df.withColumn("homedest", dest_map("homedest"))
