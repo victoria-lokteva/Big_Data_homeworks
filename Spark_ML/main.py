@@ -11,13 +11,6 @@ from pyspark.sql.functions import udf
 name = '/Users/victorialokteva/Downloads/mushrooms.csv'
 df = spark.read.csv(name, header=True, schema=schema)
 
-# заполним пропуски (body заполним средним, порт посадки - самым распространенным значением, а для возраств введем большое значение)
-df_stats = df.select(_mean(col('body')).alias('mean')).collect()
-mean_body = df_stats[0]['mean']
-df = df.na.fill({'age': 100, 'cabin': 'unknown', 'embarked':'S', 'homedest':'unknown',
-                'body': mean_body, 'boat': -1, "sex": 'unknown', 'fare': -1, 
-                 'parch': -1, 'sibsp':-1, 'ticket': 'unknown'})
-
 # Сделаем one-hot encoding и нормализацию
 
 
