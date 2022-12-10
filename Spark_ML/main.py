@@ -14,13 +14,26 @@ df = spark.read.csv(name, header=True, schema=schema)
 # Сделаем one-hot encoding
 
 
+features = ['cap-shape', 'cap-surface', 'cap-color', 'bruises', 'odor',
+       'gill-attachment', 'gill-spacing', 'gill-size', 'gill-color',
+       'stalk-shape', 'stalk-root', 'stalk-surface-above-ring',
+       'stalk-surface-below-ring', 'stalk-color-above-ring',
+       'stalk-color-below-ring', 'veil-type', 'veil-color', 'ring-number',
+       'ring-type', 'spore-print-color', 'population', 'habitat']
+
+for f in features:
+    bruisesIndexer = StringIndexer(inputCol=f,
+                                outputCol=f+'Index',
+                                handleInvalid="keep")  
+    df = bruisesIndexer.fit(df.select( f)).transform(df.select("class", *features)).drop(f) 
+    
 
     
     
 features = ['pclass','sex', 'age', 'sibsp', 'parch', 'fare', 'embarked', 'boat', 'body', 'homedest']
 vectorAssembler = VectorAssembler(inputCols = features, outputCol = 'features')
 df = vectorAssembler.transform(df)
-df = df.select(['features', 'survived'])
+df = df.select(['features', 'class'])
 
     
 # разобъем на тренировочную и тестовую выборки
@@ -28,11 +41,11 @@ train, test = df.randomSplit([0.6, 0.4], seed=2)
 
 # Линейная решрессия
 
-lr = LogisticRegression(labelCol="survived", featuresCol="features")
+lr = LogisticRegression(labelCol="class", featuresCol="features")
 lr_model = lr.fit(train)
 
 rawPredictions = lr_model.transform(test)
-evaluator = MulticlassClassificationEvaluator(labelCol="survived", predictionCol="prediction",
+evaluator = MulticlassClassificationEvaluator(labelCol="class", predictionCol="prediction",
                                               metricName="accuracy")
 
 accuracy = evaluator.evaluate(rawPredictions)
@@ -40,11 +53,11 @@ print("Test accuracy ", accuracy)
 
 # SVM
 
-lsvc = LinearSVC(labelCol="survived", featuresCol="features", maxIter=10, regParam=0.1)
+lsvc = LinearSVC(labelCol="class", featuresCol="features", maxIter=10, regParam=0.1)
 lsvc = lsvc.fit(train)
 
 rawPredictions = lsvc.transform(test)
-evaluator = MulticlassClassificationEvaluator(labelCol="survived", predictionCol="prediction",
+evaluator = MulticlassClassificationEvaluator(labelCol="class", predictionCol="prediction",
                                               metricName="accuracy")
 
 accuracy = evaluator.evaluate(rawPredictions)
@@ -53,9 +66,9 @@ print("Test accuracy ", accuracy)
     
 # Random Forest
 
-rf = RandomForestClassifier(labelCol="survived", featuresCol="features", seed=2)
+rf = RandomForestClassifier(labelCol="class", featuresCol="features", seed=2)
 grid = ParamGridBuilder().addGrid(rf.maxDepth, [1, 4]).addGrid(rf.numTrees, [3, 15]).build()
-evaluator = MulticlassClassificationEvaluator(labelCol="survived", predictionCol="prediction",
+evaluator = MulticlassClassificationEvaluator(labelCol="class", predictionCol="prediction",
                                               metricName="accuracy")
 cv = CrossValidator(estimator=rf, estimatorParamMaps=grid, evaluator=evaluator,
     parallelism=2)
