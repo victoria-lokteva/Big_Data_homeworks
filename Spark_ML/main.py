@@ -9,7 +9,7 @@ from pyspark.ml import Pipeline
 from pyspark.sql.functions import udf
 
 name = '/Users/victorialokteva/Downloads/mushrooms.csv'
-df = spark.read.csv(name, header=True, schema=schema)
+df = spark.read.csv(name, header=True)
 
 # Сделаем one-hot encoding
 
