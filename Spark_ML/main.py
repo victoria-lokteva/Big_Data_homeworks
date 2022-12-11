@@ -11,26 +11,36 @@ from pyspark.sql.functions import udf
 name = '/Users/victorialokteva/Downloads/mushrooms.csv'
 df = spark.read.csv(name, header=True)
 
+# переведем таргет в целые числа
+
+def class_to_num(cl):
+    if cl == 'e':
+        return 0
+    return 1
+
+class_map = udf(class_to_num, IntegerType())
+df = df.withColumn("class", class_map("class"))
+
 # Сделаем one-hot encoding
 
-
-features = ['cap-shape', 'cap-surface', 'cap-color', 'bruises', 'odor',
-       'gill-attachment', 'gill-spacing', 'gill-size', 'gill-color',
-       'stalk-shape', 'stalk-root', 'stalk-surface-above-ring',
-       'stalk-surface-below-ring', 'stalk-color-above-ring',
-       'stalk-color-below-ring', 'veil-type', 'veil-color', 'ring-number',
-       'ring-type', 'spore-print-color', 'population', 'habitat']
+features = ["cap-shape", "cap-surface", "cap-color", "bruises", "odor",
+       "gill-attachment", "gill-spacing", "gill-size", "gill-color",
+       "stalk-shape", "stalk-root", "stalk-surface-above-ring",
+       "stalk-surface-below-ring", "stalk-color-above-ring",
+       "stalk-color-below-ring", "veil-type", "veil-color", "ring-number",
+       "ring-type", "spore-print-color", "population", "habitat"]
 
 for f in features:
-    bruisesIndexer = StringIndexer(inputCol=f,
+    Indexer = StringIndexer(inputCol=f,
                                 outputCol=f+'Index',
                                 handleInvalid="keep")  
-    df = bruisesIndexer.fit(df.select( f)).transform(df.select("class", *features)).drop(f) 
+    df = Indexer.fit(df.select(f)).transform(df.select("class", *features)).drop(f) 
+    df = df.withColumnRenamed(f+'Index', f)
+    
     
 
-    
-    
-features = ['pclass','sex', 'age', 'sibsp', 'parch', 'fare', 'embarked', 'boat', 'body', 'homedest']
+
+
 vectorAssembler = VectorAssembler(inputCols = features, outputCol = 'features')
 df = vectorAssembler.transform(df)
 df = df.select(['features', 'class'])
