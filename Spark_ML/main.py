@@ -49,6 +49,7 @@ non_binary_feat = ["cap-shape", "cap-surface", "bruises", "gill-color", "stalk-s
 for f in non_binary_feat:
     encoder = OneHotEncoder(inputCols=[f], outputCols=[f+'one'])
     df = encoder.fit(df).transform(df)
+    df = df.drop(f)
     df = df.withColumnRenamed(f+'one', f)
 
 
