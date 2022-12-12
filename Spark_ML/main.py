@@ -21,6 +21,9 @@ def class_to_num(cl):
 class_map = udf(class_to_num, IntegerType())
 df = df.withColumn("class", class_map("class"))
 
+# уберем колонку, в которой только 1 уникальное значение
+df = df.drop("veil-type")
+
 # Сделаем one-hot encoding
 
 features = ["cap-shape", "cap-surface", "cap-color", "bruises", "odor",
@@ -30,15 +33,23 @@ features = ["cap-shape", "cap-surface", "cap-color", "bruises", "odor",
        "stalk-color-below-ring", "veil-type", "veil-color", "ring-number",
        "ring-type", "spore-print-color", "population", "habitat"]
 
+# превратим строки в числа
 for f in features:
     Indexer = StringIndexer(inputCol=f,
                                 outputCol=f+'Index',
                                 handleInvalid="keep")  
     df = Indexer.fit(df.select(f)).transform(df.select("class", *features)).drop(f) 
     df = df.withColumnRenamed(f+'Index', f)
-    
-    
 
+
+non_binary_feat = ["cap-shape", "cap-surface", "bruises", "gill-color", "stalk-shape", 
+                   "stalk-root", "stalk-surface-above-ring", "stalk-surface-below-ring",
+                   "stalk-color-above-ring", "veil-type", "ring-number", "ring-type",
+                   "spore-print-color", "population"]
+for f in non_binary_feat:
+    encoder = OneHotEncoder(inputCols=[f], outputCols=[f+'one'])
+    df = encoder.fit(df).transform(df)
+    df = df.withColumnRenamed(f+'one', f)
 
 
 vectorAssembler = VectorAssembler(inputCols = features, outputCol = 'features')
