@@ -44,7 +44,7 @@ for f in features:
 
 non_binary_feat = ["cap-shape", "cap-surface", "bruises", "gill-color", "stalk-shape", 
                    "stalk-root", "stalk-surface-above-ring", "stalk-surface-below-ring",
-                   "stalk-color-above-ring", "veil-type", "ring-number", "ring-type",
+                   "stalk-color-above-ring", "ring-number", "ring-type",
                    "spore-print-color", "population"]
 for f in non_binary_feat:
     encoder = OneHotEncoder(inputCols=[f], outputCols=[f+'one'])
